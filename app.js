@@ -4,6 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var pg = require('pg-promise')
+var session = require('express-session')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -27,23 +29,32 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/users', users); 
 
 var passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy;
 
+app.use(passport.initialize());
 passport.use(new FacebookStrategy({
     clientID: '675333105982659',
     clientSecret: '0385cdb71eae35ffaf20d8492f89a67a',
-    callbackURL: "https://127.0.0.1:3000/auth/facebook/callback"
+    callbackURL: "http://127.0.0.1:3000/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({fbID: profile.id}, function(err, user) {
-      if (err) { return done(err); }
-      done(null, user);
-    });
+    process.nextTick(function () {
+      User.findOrCreate({fbID: profile.id}, function(err, user) {
+        if (err) { return done(err); }
+        done(null, user);
+      });
+    })
   }
 ));
 
@@ -63,7 +74,7 @@ app.get('/auth/facebook',
 passport.authenticate('facebook', { scope: 'email' }))
 
 app.get('/auth/facebook/callback',
-passport.authenticate('facebook', { failureRedirect: '/' }, { successRedirect: '/index'}))
+passport.authenticate('facebook', { failureRedirect: '/',  successRedirect: '/index'}))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

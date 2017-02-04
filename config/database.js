@@ -23,14 +23,15 @@ const create = (authsha, lat, lng, label, imageBlob, rating) => {
 }
 
 const getAllMarkers = _ => {
-  return db.all(
-    ``
+  return db.many(
+    `SELECT * FROM "user"`
     )
 }
 
 module.exports = {
   db,
-  create
+  create,
+  getAllMarkers
 }
 
 

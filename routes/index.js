@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var {create} = require('../config/database');
+var {create, getAllMarkers} = require('../config/database');
 
 /* GET home page. */
 router.get('/index', function(req, res, next) {
@@ -16,11 +16,18 @@ router.get('/landing', function(req, res, next) {
 router.post('/marker/save/:id', function(req, res, next) {
   const id = req.params.id
   const { lat, lng, label } = req.body
-  // TODO: DELETE ME: result
   create( id, lat, lng, label, 100010101, 5).then( val => {
-    console.log('VALUES', val );
     res.send(val)
   })
 })
+
+router.get('/marker/getAll', function(req, res, next) {
+  getAllMarkers().then( val => {
+    console.log(val[3])
+    // res.send(val)
+  })
+})
+
+
 
 module.exports = router;

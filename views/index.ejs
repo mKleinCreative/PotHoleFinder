@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="">
   </head>
   <body>
-    <div>Greetings <%= name %></div>
+    <div class="greeting">Greetings <%= name %></div>
     <div id="map"></div>
+    <div class="boxshadow"></div>
     <div class="ui">
-      <h3>Currently Selected Location:</h3><p id="selectedMarker"></p>
+      <h3>Currently Selected Location:</h3>
       <button id="deleteMarker">Delete Marker</button>
+      <p class="marginTop">Severity of Pothole:</p>
       <div id="rateYo"></div>
       <h2>File Uploader</h2>
       <div class="progress">
@@ -20,7 +22,12 @@
       <button class="upload-btn" type="button">Upload File</button>
       <div></div>
     </div>
-    <img id="image" src="" alt="Image">
+    <div class="ui2">
+      <p id="selectedMarker"></p>
+    </div>
+    <div class="imageContainer">
+      <img id="image" src="" alt="Image">
+    </div>
     <input id="upload-input" type="file" name="uploads[]" multiple="multiple"></br>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.2.0/jquery.rateyo.min.js"></script>

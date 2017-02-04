@@ -19,11 +19,10 @@ function initMap(){
       position: pos,
       label: markerItem.label,
       map: map,
+      // draggable: true,
+      // icon: 'https://pbs.twimg.com/profile_images/608604270347223041/ko5Erkaw.png',
       rating: (markerItem.rating / 10),
     });
-
-
-
 
     google.maps.event.addListener(marker, 'click', () => {
       console.log(google.maps)
@@ -41,6 +40,7 @@ function initMap(){
         if(data.length > 0) { // Returns User as 1 element, need more than 1 if data found
           for(let markerItem of data){
             createMe(markerItem)
+            labelIndex++
           }
         }
       //})
@@ -58,10 +58,12 @@ function initMap(){
       position: pos,
       label: labels[labelIndex++ % labels.length],
       map: map,
+      // draggable: true,
+      // icon: 'https://pbs.twimg.com/profile_images/608604270347223041/ko5Erkaw.png',
       rating: 3.5,
     });
 
-    // map.setCenter(pos)
+    map.setCenter(pos)
     selectMarker(marker)
 
     $("#rateYo").rateYo({
@@ -96,6 +98,7 @@ function initMap(){
   }
 
   var deleteMarker = function(marker) {
+    selectedMarker = null
     marker.setMap(null);
     $.ajax({
       type: "POST",
@@ -123,8 +126,8 @@ function initMap(){
       };
       var infoWindow = new google.maps.InfoWindow({map: map});
       infoWindow.setPosition(pos);
-      infoWindow.setContent('Location found.');
-      map.setCenter(pos);
+      infoWindow.setContent('You are here.');
+      // map.setCenter(pos);
     }, function() {
       handleLocationError(true, map.getCenter());
     });

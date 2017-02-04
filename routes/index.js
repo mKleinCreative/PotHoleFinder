@@ -5,7 +5,7 @@ var {create} = require('../config/database');
 
 /* GET home page. */
 router.get('/index', function(req, res, next) {
-  res.render('index', { title: 'Find The Hole', id: req.session.passport.user.fbID });
+  res.render('index', { title: 'Find The Hole', id: req.session.passport.user.fbID, name: req.session.passport.user.displayName });
 });
 
 router.get('/landing', function(req, res, next) {

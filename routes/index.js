@@ -13,10 +13,8 @@ router.get('/landing', function(req, res, next) {
 });
 
 router.post('/marker/save/:id', function(req, res, next) {
-  console.log("IVE BEEN CALLED!")
   const id = req.params.id
   const { lat, lng, label } = req.body
-  console.log('body', req.body, 'label', label, 'id', id);
   // TODO: DELETE ME: result
   create( id, lat, lng, label, 100010101, 5).then( val => {
     console.log('VALUES', val );

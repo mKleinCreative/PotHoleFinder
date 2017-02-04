@@ -6,49 +6,57 @@
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 
-function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 37.801, lng: -122.273},
-    zoom: 18
+function addMarkerClick(location, map) {
+  const pos = location
+  var marker = new google.maps.Marker({
+    position: pos,
+    title: 'Pothole Location',
+    label: labels[labelIndex++ % labels.length],
+    map: map
   });
-  var infoWindow = new google.maps.InfoWindow({map: map});
 
+  infoWindow.setPosition(pos);
+  map.setCenter(pos)
 
-  // Try HTML5 geolocation.
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      var marker = new google.maps.Marker({
-        position: pos,
-        map: map,
-        title: 'Pothole Location',
-        label: labels[labelIndex++ % labels.length]
-      });
-
-      infoWindow.setPosition(pos);
-      infoWindow.setContent('Location found.');
-      map.setCenter(pos);
-
-      $.ajax({
-      type: "POST",
-      url: `/marker/save/${$(this).data('id')}`,
-      data: { position: pos, label: marker.label },
-      success: function() {
-        //window.location.reload()
-        console.log("This is working!")
-      }
-
-    }, function() {
+  $.ajax({
+    type: "POST",
+    url: `/marker/save/1570791732949602`,
+    data: { lat: pos.lat, lng: pos.lng, label: marker.label },
+    success: function() {
+      //window.location.reload()
+      console.log("This is working!")
+    },
+    function() {
       handleLocationError(true, infoWindow, map.getCenter());
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleLocationError(false, infoWindow, map.getCenter());
-  }
+    }
+  })
+
 }
+
+var map = new google.maps.Map(document.getElementById('map'), {
+  center: {lat: 37.801, lng: -122.273},
+  zoom: 18
+});
+var infoWindow = new google.maps.InfoWindow({map: map});
+
+google.maps.event.addListener(map, 'click', function(event) {
+  navigator.geolocation.getCurrentPosition( function(position) {
+    var latLng = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    }
+    addMarkerClick(event.latLng, map);
+  })
+});
+
+
+
+
+google.maps.event.addDomListener(window, 'load', (...args) => {
+  const pos = {lat: 37.801, lng: -122.273}
+  infoWindow.setPosition(pos);
+  map.setCenter(pos)
+});
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.setPosition(pos);

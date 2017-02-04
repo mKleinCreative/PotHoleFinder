@@ -10,6 +10,11 @@ var users = require('./routes/users');
 
 var app = express();
 
+const User = {
+  findOrCreate: (info, callback) => {
+    callback(null, info)
+  }
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -35,7 +40,7 @@ passport.use(new FacebookStrategy({
     callbackURL: "http://127.0.0.1/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate(..., function(err, user) {
+    User.findOrCreate({fbID: profile.id}, function(err, user) {
       if (err) { return done(err); }
       done(null, user);
     });
@@ -50,15 +55,15 @@ passport.deserializeUser(function(obj, callback) {
   callback(null, obj);
 })
 
+app.get('/', function(req, res, next) {
+  res.redirect('/landing');
+});
+
 app.get('/auth/facebook',
-passport.authenticate('facebook'))
+passport.authenticate('facebook', { scope: 'email' }))
 
 app.get('/auth/facebook/callback',
-passport.authenticate('facebook', { failureRedirect: '/' }),
-function(req, res) {
-  // Successful authentication, redirect home.
-  res.redirect('/game')
-})
+passport.authenticate('facebook', { failureRedirect: '/' }, { successRedirect: '/index'}))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

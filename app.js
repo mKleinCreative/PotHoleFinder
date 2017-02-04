@@ -37,7 +37,7 @@ app.use(session({
 }))
 
 app.use('/', index);
-app.use('/users', users); 
+app.use('/users', users);
 
 var passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy;
@@ -75,6 +75,12 @@ passport.authenticate('facebook', { scope: 'email' }))
 
 app.get('/auth/facebook/callback',
 passport.authenticate('facebook', { failureRedirect: '/',  successRedirect: '/index'}))
+
+app.get('/profile', isLoggedIn, function(req, res) {
+  res.render('/index.ejs', {
+    user : req.user
+  })
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

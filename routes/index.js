@@ -5,10 +5,11 @@ var {create} = require('../config/database');
 
 /* GET home page. */
 router.get('/index', function(req, res, next) {
-  res.render('index', { title: 'Find The Hole' });
+  res.render('index', { title: 'Find The Hole', id: req.session.passport.user.fbID });
 });
 
 router.get('/landing', function(req, res, next) {
+  // console.log( "=====>", req.session.passport.user.fbID)
   res.render('landing', { title: 'Find The Hole' });
 });
 

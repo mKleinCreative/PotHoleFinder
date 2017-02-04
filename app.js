@@ -9,6 +9,7 @@ var session = require('express-session')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var pgSession = require('connect-pg-simple')(session)
 
 var app = express();
 
@@ -17,6 +18,8 @@ const User = {
     callback(null, info)
   }
 }
+
+var conString = 'postgres://localhost:5432/FindTheHole'
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,13 +30,20 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser({uploadDir:'/public/images'}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
+  store: new pgSession({
+    conString : process.env.DATABASE_URL || conString
+  }),
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true }
+  cookie: { 
+    secure: false,
+    maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
+   }
 }))
 
 app.use('/', index);
@@ -50,7 +60,7 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     process.nextTick(function () {
-      User.findOrCreate({fbID: profile.id}, function(err, user) {
+      User.findOrCreate({fbID: profile.id, displayName: profile.displayName}, function(err, user) {
         if (err) { return done(err); }
         done(null, user);
       });

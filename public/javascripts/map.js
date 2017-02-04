@@ -1,30 +1,61 @@
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
-var markerCounter = 0;
-var markers = [];
 var selectedMarker = undefined;
-var markerObjs = []
-
-function uniqueId(){
-  return ++markerCounter;
-}
-
 
 function initMap(){
+
+  function selectMarker(marker) {
+    selectedMarker = marker
+    $('#selectedMarker').text(marker.label)
+    $("#rateYo").rateYo("option", "rating", marker.rating);
+  }
+
+  function createMe(markerItem){
+    let pos = {'lat': markerItem.lat, 'lng': markerItem.lng}
+    var marker = new google.maps.Marker({
+      id: markerItem.id,
+      animation: google.maps.Animation.DROP,
+      position: pos,
+      label: markerItem.label,
+      map: map,
+      rating: (markerItem.rating / 10),
+    });
+
+    google.maps.event.addListener(marker, 'click', () => {
+      console.log(google.maps)
+      console.log("Marker clicked", marker.id)
+      selectMarker(marker);
+    })
+  }
+
+  $.ajax({
+    type: "POST",
+    url: `/marker/getAll`,
+    success: function(data) {
+      //$.each(data, function () {
+        console.log(data)
+        if(data.length > 0) { // Returns User as 1 element, need more than 1 if data found
+          for(let markerItem of data){
+            createMe(markerItem)
+          }
+        }
+      //})
+    },
+    function() {
+      handleLocationError(true, map.getCenter());
+    }
+  })
+
   function addMarkerClick(location, map) {
     const pos = location
-    const id = uniqueId()
     var marker = new google.maps.Marker({
-      id: id,
+      id: 0,
       animation: google.maps.Animation.DROP,
       position: pos,
       label: labels[labelIndex++ % labels.length],
       map: map,
       rating: 3.5,
-      dbID: 0
     });
-    markers[id] = marker
-    markerObjs.push(marker)
 
     map.setCenter(pos)
     selectMarker(marker)
@@ -36,10 +67,10 @@ function initMap(){
     $.ajax({
       type: "POST",
       url: `/marker/save/1570791732949602`,
-      data: { lat: pos.lat, lng: pos.lng, label: marker.label },
+      data: { lat: pos.lat, lng: pos.lng, label: marker.label, rating: marker.rating },
       success: function(data) {
         $.each(data, function () {
-          marker.dbID = data.id
+          marker.id = data.id
         })
       },
       function() {
@@ -49,6 +80,7 @@ function initMap(){
 
     function selectMarker(marker) {
       selectedMarker = marker
+      console.log("Marker:", marker)
       $('#selectedMarker').text(marker.label)
       $("#rateYo").rateYo("option", "rating", marker.rating);
     }
@@ -58,10 +90,19 @@ function initMap(){
     })
   }
 
-  var deleteMarker = function(id) {
-    var marker = markers[id]; // find the marker by given id
+  var deleteMarker = function(marker) {
     marker.setMap(null);
-    marker[id] = null
+    $.ajax({
+      type: "POST",
+      url: `/marker/delete`,
+      data: { id: marker.id },
+      success: function(data) {
+        console.log("Deleted")
+      },
+      function() {
+        handleLocationError(true, map.getCenter());
+      }
+    })
   }
 
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -105,7 +146,7 @@ function initMap(){
   }
 
   $('#deleteMarker').click( event => {
-    deleteMarker(selectedMarker.id)
+    deleteMarker(selectedMarker)
   })
 
 
@@ -114,13 +155,26 @@ function initMap(){
   //   console.log("this is a new function");
   // }); // returns a jQuery Element
   $(function () {
-    $("#rateYo").rateYo({
-      onSet: function (rating, rateYoInstance) {
-        $(this).next().text(rating);
-        console.log(selectedMarker)
-        selectedMarker.rating = $("#rateYo").rateYo("option", "rating");
-        currentRating = rating
-      }
-    });
+    $("#rateYo").rateYo({});
   });
+
+  $("#rateYo").on("rateyo.init", function (e, data) {
+    $("#rateYo").rateYo("option", "onSet", function (rating, rateYoInstance) {
+      $(this).next().text(rating);
+      selectedMarker.rating = $("#rateYo").rateYo("option", "rating");
+      $.ajax({
+        type: "POST",
+        url: `/marker/update`,
+        data: { id: selectedMarker.id, rating: (selectedMarker.rating * 10) },
+        success: function(data) {
+          $.each(data, function () {
+            console.log(data)
+          })
+        },
+        function() {
+          handleLocationError(true, map.getCenter());
+        }
+      })
+    })
+  })
 }

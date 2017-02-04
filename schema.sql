@@ -14,8 +14,6 @@ CREATE TABLE "user" (
 -- Test Data
 -- ---
 
-INSERT INTO "user" ( username, AuthSHA, photo, lat, lng, rating ) VALUES ('Michael','oz;hadspohgpohdgzs;lhjta;lj','100010101','1242.1245','9876.2345','35');
-
 DROP TABLE IF EXISTS "session";
 
 CREATE TABLE "session" (

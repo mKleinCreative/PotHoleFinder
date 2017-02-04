@@ -12,26 +12,48 @@ function getAllUsers(request, response, next) {
   return db.many(' select * from user ')
 }
 
-const create = (authsha, lat, lng, label, imageBlob, rating) => {
-  return db.one(
+const create = (authsha, lat, lng, label, rating) => {
+  return db.oneOrNone(
     `INSERT INTO
-    "user" (authsha, lat, lng, label, rating)
+    "user"(authsha, lat, lng, label, rating)
     VALUES
     ( $1, $2, $3, $4, $5 )
     RETURNING id`, [authsha, lat, lng, label, rating]
     )
+    // .then( data => {
+    //   console.log("I got here, ", data)
+    // })
 }
 
-const getAllMarkers = _ => {
-  return db.many(
-    `SELECT * FROM "user"`
+const getAllMarkers = () => {
+  // console.log("About to get those markers")
+  return db.manyOrNone('select * from "user"')
+}
+
+const update = (id, rating) => {
+  return db.oneOrNone(
+    `UPDATE
+    "user"
+    SET
+    rating=$2
+    WHERE id=$1`, [ id, rating ]
+    )
+}
+
+const deleteItem = id => {
+  return db.oneOrNone(
+    `DELETE FROM
+    "user"
+    WHERE id=$1`, [ id ]
     )
 }
 
 module.exports = {
   db,
   create,
-  getAllMarkers
+  getAllMarkers,
+  update,
+  deleteItem
 }
 
 

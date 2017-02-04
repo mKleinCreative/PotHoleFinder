@@ -37,7 +37,7 @@ var passport = require('passport')
 passport.use(new FacebookStrategy({
     clientID: '675333105982659',
     clientSecret: '0385cdb71eae35ffaf20d8492f89a67a',
-    callbackURL: "http://127.0.0.1/auth/facebook/callback"
+    callbackURL: "https://127.0.0.1:3000/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     User.findOrCreate({fbID: profile.id}, function(err, user) {

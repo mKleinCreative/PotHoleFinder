@@ -12,4 +12,6 @@ router.get('/landing', function(req, res, next) {
   res.render('landing', { title: 'Find The Hole' });
 });
 
+router.post('/marker/save/')
+
 module.exports = router;

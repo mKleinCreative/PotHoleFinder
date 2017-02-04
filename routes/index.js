@@ -19,6 +19,7 @@ router.post('/marker/save/:id', function(req, res, next) {
   // TODO: DELETE ME: result
   create( id, lat, lng, label, 100010101, 5).then( val => {
     console.log('VALUES', val );
+    res.send(val)
   })
 })
 

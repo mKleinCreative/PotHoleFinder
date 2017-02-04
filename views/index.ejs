@@ -3,11 +3,19 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.2.0/jquery.rateyo.min.css">
   </head>
   <body>
     <div>Greetings <%= name %></div>
     <div id="map"></div>
+    <div class="ui">
+      <h3>Currently Selected Location:</h3><p id="selectedMarker"></p>
+      <button id="deleteMarker">Delete Marker</button>
+      <div id="rateYo"></div>
+      <h3></h3>
+    </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.2.0/jquery.rateyo.min.js"></script>
     <script src="javascripts/map.js" charset="utf-8"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBA7YST1AMtm4O8EZYhBXWWzuSyzHcyiCw&callback=initMap">
     </script>

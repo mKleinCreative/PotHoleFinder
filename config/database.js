@@ -13,13 +13,18 @@ function getAllUsers(request, response, next) {
 }
 
 const create = (authsha, lat, lng, label, imageBlob, rating) => {
-  console.log("I'm updating now!")
   return db.one(
     `INSERT INTO
     "user" (authsha, lat, lng, label, rating)
     VALUES
     ( $1, $2, $3, $4, $5 )
     RETURNING id`, [authsha, lat, lng, label, rating]
+    )
+}
+
+const getAllMarkers = _ => {
+  return db.all(
+    ``
     )
 }
 

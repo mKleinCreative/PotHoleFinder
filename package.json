@@ -6,7 +6,8 @@
     "start": "nodemon ./bin/www",
     "create": "createdb FindTheHole",
     "drop": "dropdb FindTheHole",
-    "setup": "psql FindTheHole < ./schema.sql"
+    "setup": "psql FindTheHole < ./schema.sql",
+    "reset": "npm run drop && npm run create && npm run setup && npm start"
   },
   "dependencies": {
     "bluebird": "^3.4.7",

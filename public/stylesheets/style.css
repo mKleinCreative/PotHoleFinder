@@ -7,6 +7,16 @@ a {
   color: #00B7FF;
 }
 
+.ui {
+  display: flex;
+  justify-content: flex-start;
+  align-items: space-between;
+  flex-direction: column;
+  max-width: 300px;
+  flex-wrap: wrap;
+  float: left;
+}
+
 .ui h3 {
   display: inline-block;
   margin-right: 5px;
@@ -30,4 +40,28 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+#upload-input {
+  display: none;
+}
+
+.upload-btn {
+  color: #ffffff;
+  background-color: #F89406;
+  border: none;
+}
+
+.upload-btn:hover,
+.upload-btn:focus,
+.upload-btn:active,
+.upload-btn.active {
+  color: #ffffff;
+  background-color: #FA8900;
+  border: none;
+}
+
+#image {
+  display: flex;
+  float: right;
 }
